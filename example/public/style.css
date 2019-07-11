@@ -1,0 +1,51 @@
+body {
+    margin: 0;
+    padding: 2%;
+    background-color: black;
+}
+
+h1, h2 {
+    color: white;
+}
+
+.container {
+    display: flex;
+    overflow-x: scroll;
+    padding: 2%;
+    max-width: 100%;
+    background-color: darkgray;
+}
+
+.container::before
+{
+    content: '';
+    display: block;
+    min-width: 50%;
+}
+
+.container::after
+{
+    content: '';
+    display: block;
+    min-width: 50%;
+}
+
+.item {
+    flex-basis: auto;
+    padding: 50% auto;
+    margin: 1%;
+    min-width: 300px;
+    min-height: 300px;
+    background-color: burlywood;
+    text-align: center;
+    color: chocolate;
+}
+
+.carousel__focus {
+    outline: rgb(77, 151, 194) solid 2px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+}
