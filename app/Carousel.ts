@@ -169,4 +169,16 @@ export default class Carousel
         this.elements = elements
         return this
     }
+
+    public setInterval(interval:number): this
+    {
+        this.interval = interval
+        return this
+    }
+
+    public setSizeSkip(skip:number): this
+    {
+        this.sizeSkip = skip
+        return this
+    }
 }
