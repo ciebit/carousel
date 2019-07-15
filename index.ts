@@ -1,4 +1,5 @@
-import Carousel from './app/Carousel'
-import Direction from './app/Direction'
+import Carousel from './source/Carousel'
+import Direction from './source/Direction'
+import ListenerOptions from './source/ListenerOptions'
 
-export { Carousel, Direction }
+export { Carousel, Direction, ListenerOptions }
