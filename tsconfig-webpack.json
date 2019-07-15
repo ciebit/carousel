@@ -4,12 +4,7 @@
         "module": "ES2015",
         "baseUrl": ".",
         "moduleResolution": "node",
-        "declaration": true,
-        "outDir": "./lib/"
     },
-    "include": [
-        "source/index.ts"
-    ],
     "exclude": [
         "node_modules"
     ]
