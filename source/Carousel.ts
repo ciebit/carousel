@@ -1,4 +1,6 @@
 import Direction from './Direction'
+import Hermes from '@ciebit/hermes'
+import ListenerOptions from './ListenerOptions'
 
 export default class Carousel
 {
@@ -7,6 +9,7 @@ export default class Carousel
     private elements: Array<Element>
     private focusItemClass: string
     private focusItemElement: Element
+    private hermes: Hermes
     private interval: number
     private intervalId: number
     private sizeSkip: number
@@ -17,6 +20,7 @@ export default class Carousel
         this.direction = Direction.x
         this.elements = []
         this.focusItemClass = 'carousel__focus'
+        this.hermes = new Hermes
         this.intervalId = 0
         this.interval = 2000
         this.sizeSkip = 300
@@ -25,6 +29,12 @@ export default class Carousel
     public addElement(...element:Array<Element>): this
     {
         this.elements.push(...element)
+        return this
+    }
+
+    public addListener(option: ListenerOptions, callback: Function, singleCall: boolean = false): this
+    {
+        this.hermes.addListener(option, callback, singleCall)
         return this
     }
 
@@ -42,6 +52,7 @@ export default class Carousel
     private autoMoveStart(): this
     {
         this.intervalId = window.setInterval(() => this.scroll(), this.interval)
+        this.hermes.dispatch(ListenerOptions.AutoMoveStart, this)
         return this
     }
 
@@ -49,12 +60,14 @@ export default class Carousel
     {
         window.clearInterval(this.intervalId)
         this.intervalId = 0
+        this.hermes.dispatch(ListenerOptions.AutoMoveStop, this)
         return this
     }
 
     public autoMoveToggle(): this
     {
         this.autoMove(! this.isAutoMove());
+        this.hermes.dispatch(ListenerOptions.AutoMoveToggle, this)
         return this
     }
 
@@ -75,6 +88,7 @@ export default class Carousel
         }
 
         this.moveTo(this.elements[index])
+        this.hermes.dispatch(ListenerOptions.MoveNext, this)
 
         return this
     }
@@ -91,6 +105,7 @@ export default class Carousel
         }
 
         this.moveTo(this.elements[index])
+        this.hermes.dispatch(ListenerOptions.MovePrevious, this)
 
         return this
     }
@@ -125,6 +140,14 @@ export default class Carousel
             element.classList.add(this.focusItemClass)
         }
 
+        this.hermes.dispatch(ListenerOptions.Move, this)
+
+        return this
+    }
+
+    public removeListener(option: ListenerOptions, callback: Function): this
+    {
+        this.hermes.remove(option, callback)
         return this
     }
 

@@ -1,4 +1,4 @@
-import {Carousel, Direction } from './../../index'
+import {Carousel, ListenerOptions } from './../../index'
 
 document.addEventListener('DOMContentLoaded', () => 
 {
@@ -14,6 +14,9 @@ function carouselAuto(document: Document)
 
     const carousel = new Carousel(container)
     carousel.addElement(...Array.prototype.slice.call(items))
+    carousel.addListener(ListenerOptions.AutoMoveStart, () => console.log('Auto Move Start'))
+    carousel.addListener(ListenerOptions.AutoMoveStop, () => console.log('Auto Move Stop'))
+    carousel.addListener(ListenerOptions.AutoMoveToggle, () => console.log('Auto Move Toggle'))
     carousel.autoMove(true)
 
     buttonStartStop.addEventListener('click', carousel.autoMoveToggle.bind(carousel))
@@ -28,6 +31,9 @@ function carouselManualHorizontal(document:Document)
 
     const carousel = new Carousel(container)
     carousel.addElement(...Array.prototype.slice.call(items))
+    carousel.addListener(ListenerOptions.Move, () => console.log('Manual Move'))
+    carousel.addListener(ListenerOptions.MoveNext, () => console.log('Manual Move Next'))
+    carousel.addListener(ListenerOptions.MovePrevious, () => console.log('Manual Move Previous'))
 
     buttonNext.addEventListener('click', carousel.moveNext.bind(carousel))
     buttonPrevious.addEventListener('click', carousel.movePrevious.bind(carousel))

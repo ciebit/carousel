@@ -1,15 +1,16 @@
 {
   "name": "@ciebit/carousel",
-  "version": "1.0.0",
-  "description": "A simple Typescript carousel",
-  "main": "index.ts",
+  "version": "1.1.0",
+  "description": "A simple carousel",
+  "main": "lib/Carousel.js",
   "directories": {
     "example": "example",
-    "lib": "app"
+    "lib": "lib"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-dev": "webpack --mode=development"
+    "build": "tsc",
+    "build-example": "webpack --mode=development"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,9 @@
     "ts-loader": "^5.3.3",
     "typescript": "^3.5.3",
     "webpack": "^4.30.0",
-    "webpack-cli": "^3.3.0"
+    "webpack-cli": "^3.3.6"
+  },
+  "dependencies": {
+    "@ciebit/hermes": "^4.0.1"
   }
 }
