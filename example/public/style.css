@@ -42,6 +42,8 @@ h1, h2 {
 }
 
 .carousel__focus {
+    transition: transform 4s;
+    transform: rotate(20deg);
     outline: rgb(77, 151, 194) solid 2px;
 }
 

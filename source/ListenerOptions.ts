@@ -3,9 +3,11 @@ enum ListenerOptions
     AutoMoveStart = 'autoMoveStart',
     AutoMoveStop = 'autoMoveStop',
     AutoMoveToggle = 'autoMoveToggle',
-    Move = 'move',
-    MoveNext = 'moveNext',
-    MovePrevious = 'movePrevious',
+    MovedToFirstItem = 'movedToFirstItem',
+    MovedToItem = 'movedToItem',
+    MovedToLastItem = 'movedToLastItem',
+    MovedToNext = 'movedToNext',
+    MovedToPrevious = 'movedToPrevious',
 }
 
 export default ListenerOptions

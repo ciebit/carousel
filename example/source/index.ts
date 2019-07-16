@@ -31,10 +31,12 @@ function carouselManualHorizontal(document:Document)
 
     const carousel = new Carousel(container)
     carousel.addElement(...Array.prototype.slice.call(items))
-    carousel.addListener(ListenerOptions.Move, () => console.log('Manual Move'))
-    carousel.addListener(ListenerOptions.MoveNext, () => console.log('Manual Move Next'))
-    carousel.addListener(ListenerOptions.MovePrevious, () => console.log('Manual Move Previous'))
+    carousel.addListener(ListenerOptions.MovedToItem, () => console.log('Manual Moved'))
+    carousel.addListener(ListenerOptions.MovedToNext, () => console.log('Manual Moved Next'))
+    carousel.addListener(ListenerOptions.MovedToPrevious, () => console.log('Manual Moved Previous'))
+    carousel.addListener(ListenerOptions.MovedToFirstItem, () => console.log('Manual Moved First Item'))
+    carousel.addListener(ListenerOptions.MovedToLastItem, () => console.log('Manual Moved Last Item'))
 
-    buttonNext.addEventListener('click', carousel.moveNext.bind(carousel))
-    buttonPrevious.addEventListener('click', carousel.movePrevious.bind(carousel))
+    buttonNext.addEventListener('click', carousel.moveToNextItem.bind(carousel))
+    buttonPrevious.addEventListener('click', carousel.moveToPreviousItem.bind(carousel))
 }

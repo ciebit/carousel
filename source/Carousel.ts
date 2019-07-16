@@ -1,14 +1,17 @@
+import AutoMoveMode from './AutoMoveMode'
 import Direction from './Direction'
 import Hermes from '@ciebit/hermes'
 import ListenerOptions from './ListenerOptions'
 
 export default class Carousel
 {
+    private autoMoveMode: AutoMoveMode
+    private behavior: ScrollBehavior
     private container: Element
     private direction: Direction
-    private elements: Array<Element>
+    private elements: Array<HTMLElement>
     private focusItemClass: string
-    private focusItemElement: Element
+    private focusItemElement: HTMLElement
     private hermes: Hermes
     private interval: number
     private intervalId: number
@@ -16,6 +19,8 @@ export default class Carousel
 
     public constructor(container: Element)
     {
+        this.autoMoveMode = AutoMoveMode.Item
+        this.behavior = 'smooth'
         this.container = container
         this.direction = Direction.x
         this.elements = []
@@ -26,7 +31,7 @@ export default class Carousel
         this.sizeSkip = 300
     }
 
-    public addElement(...element:Array<Element>): this
+    public addElement(...element:Array<HTMLElement>): this
     {
         this.elements.push(...element)
         return this
@@ -71,12 +76,22 @@ export default class Carousel
         return this
     }
 
+    public getItemFocus(): HTMLElement
+    {
+        return this.focusItemElement
+    }
+
+    public getItems(): HTMLElement[]
+    {
+        return this.elements
+    }
+
     public isAutoMove(): boolean
     {
         return this.intervalId > 0
     }
 
-    public moveNext(): this
+    public moveToNextItem(): this
     {
         let index = this.elements.indexOf(this.focusItemElement) + 1
 
@@ -87,13 +102,17 @@ export default class Carousel
             return this
         }
 
-        this.moveTo(this.elements[index])
-        this.hermes.dispatch(ListenerOptions.MoveNext, this)
+        this.moveToItem(this.elements[index])
+        this.hermes.dispatch(ListenerOptions.MovedToNext, this)
+
+        if ((index +1) == this.elements.length) {
+            this.hermes.dispatch(ListenerOptions.MovedToLastItem, this)
+        }
 
         return this
     }
 
-    public movePrevious(): this
+    public moveToPreviousItem(): this
     {
         let index = this.elements.indexOf(this.focusItemElement) - 1
 
@@ -104,16 +123,20 @@ export default class Carousel
             return this
         }
 
-        this.moveTo(this.elements[index])
-        this.hermes.dispatch(ListenerOptions.MovePrevious, this)
+        this.moveToItem(this.elements[index])
+        this.hermes.dispatch(ListenerOptions.MovedToPrevious, this)
+
+        if (index == 0) {
+            this.hermes.dispatch(ListenerOptions.MovedToFirstItem, this)
+        }
 
         return this
     }
 
-    public moveTo(element:Element): this
+    public moveToItem(element:HTMLElement): this
     {
         const index: number = this.elements.indexOf(element)
-        if (index < 0) {
+        if (index < 0 || this.focusItemElement == element) {
             return this
         }
 
@@ -123,24 +146,36 @@ export default class Carousel
 
         this.focusItemElement = element
 
-        let options:ScrollIntoViewOptions = {
-            behavior: "smooth",
-            block: "nearest",
-            inline: "center"
+        const elementStyles: CSSStyleDeclaration = window.getComputedStyle(element)
+        let x: number
+        x = this.container.clientWidth
+        x -= element.offsetWidth
+        x -= parseFloat(elementStyles.marginLeft) + parseFloat(elementStyles.marginRight)
+        x = x / 2
+        x = element.offsetLeft - x
+
+        let y: number
+        y = this.container.clientHeight
+        y -= element.offsetHeight
+        y -= parseFloat(elementStyles.marginTop) + parseFloat(elementStyles.marginBottom)
+        y = y / 2
+        y = element.offsetLeft - y
+
+        if (this.direction != Direction.x) {
+            x = undefined
         }
 
-        if (this.direction == Direction.y) {
-            options.block = "center"
-            options.inline = "nearest"
+        if (this.direction != Direction.y) {
+            y = undefined
         }
-
-        element.scrollIntoView(options)
+    
+        this.scrollTo(x, y, this.behavior)
 
         if (this.focusItemClass.length > 0) {
             element.classList.add(this.focusItemClass)
         }
 
-        this.hermes.dispatch(ListenerOptions.Move, this)
+        this.hermes.dispatch(ListenerOptions.MovedToItem, this)
 
         return this
     }
@@ -153,31 +188,50 @@ export default class Carousel
 
     private scroll(): this
     {
-        let direction: string = 'top'
-        let actualPosition: number = this.container.scrollTop
-        let sizeScroll: number = this.container.scrollHeight
-        let contentSize: number = this.container.clientHeight
-        
+        let actualPosition: number
+        let contentSize: number
+        let sizeScroll: number
+        let skipX: number
+        let skipY: number
+
         if (this.direction == Direction.x) {
-            direction = 'left'
             actualPosition = this.container.scrollLeft
             sizeScroll = this.container.scrollWidth
             contentSize = this.container.clientWidth
+            skipX = actualPosition + this.sizeSkip
+        } else {
+            actualPosition = this.container.scrollTop
+            sizeScroll = this.container.scrollHeight
+            contentSize = this.container.clientHeight
+            skipY = actualPosition + this.sizeSkip
         }
-
-        let skip: number = actualPosition + this.sizeSkip
 
         if (sizeScroll - actualPosition === contentSize) {
-            skip = 0
+            skipX = skipX > 0 ? 0 : undefined
+            skipY = skipY > 0 ? 0 : undefined
         }
 
-        let options: ScrollOptions = {
-            'behavior': 'smooth'
+        this.scrollTo(skipX, skipY, this.behavior)
+
+        return this
+    }
+
+    public scrollTo(x: number, y: number, behavior: ScrollBehavior): this
+    {
+        let options: ScrollToOptions = {
+            'left': x,
+            'top': y,
+            'behavior': behavior
         }
-        options[direction] = skip
 
         this.container.scroll(options)
 
+        return this
+    }
+
+    public setAutoMoveMode(mode: AutoMoveMode): this
+    {
+        this.autoMoveMode = mode
         return this
     }
 
@@ -187,7 +241,7 @@ export default class Carousel
         return this
     }
 
-    public setElements(elements:Array<Element>): this
+    public setElements(elements:Array<HTMLElement>): this
     {
         this.elements = elements
         return this
