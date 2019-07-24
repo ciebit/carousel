@@ -76,6 +76,11 @@ export default class Carousel
         return this
     }
 
+    public getAutoMoveMode(): AutoMoveMode
+    {
+        return this.autoMoveMode
+    }
+
     public getItemFocus(): HTMLElement
     {
         return this.focusItemElement
@@ -89,6 +94,20 @@ export default class Carousel
     public isAutoMove(): boolean
     {
         return this.intervalId > 0
+    }
+
+    public moveToFirstItem(): this
+    {
+        this.moveToItem(this.elements[0])
+        this.hermes.dispatch(ListenerOptions.MovedToFirstItem, this)
+        return this
+    }
+
+    public moveToLastItem(): this
+    {
+        this.moveToItem(this.elements[this.elements.length - 1])
+        this.hermes.dispatch(ListenerOptions.MovedToLastItem, this)
+        return this
     }
 
     public moveToNextItem(): this
@@ -188,6 +207,15 @@ export default class Carousel
 
     private scroll(): this
     {
+        if (this.autoMoveMode == AutoMoveMode.Item) {
+            const actualItem = this.getItemFocus()
+            this.moveToNextItem()
+            if (actualItem && actualItem == this.getItemFocus()) {
+                this.moveToFirstItem()
+            }
+            return this
+        }
+
         let actualPosition: number
         let contentSize: number
         let sizeScroll: number
