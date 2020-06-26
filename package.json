@@ -38,9 +38,9 @@
   "license": "MIT",
   "devDependencies": {
     "ts-loader": "^5.3.3",
-    "typescript": "^3.5.3",
-    "webpack": "^4.41.6",
-    "webpack-cli": "^3.3.6"
+    "typescript": "^3.9.5",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "@ciebit/hermes": "^4.0.1"
